@@ -1,0 +1,95 @@
+
+@font-face {
+    font-family: 'Cairo';
+    src: url('assets/fonts/cairo.ttf');
+}
+
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 80mm;
+    font-size: 12pt;
+  }
+
+  #invoice-body {
+    width: 100%;
+    max-width: 80mm;
+  }
+}
+
+* {
+    font-family: 'Cairo', sans-serif !important;
+}
+
+body {
+    background-color: #1F1F1F;
+    color: #f8f9fa;
+    direction: rtl;
+    padding-top: 40px;
+    /* font-family: 'Cairo', sans-serif; */
+    font-weight: 700;
+}
+
+.card {
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+}
+
+h3 {
+    color: #D6A201;
+}
+
+.table th {
+    background-color: #0e4d3a;
+    color: #D6A201;
+}
+
+.table td {
+    background-color: #0a5c48;
+    color: white;
+}
+
+.btn-custom {
+    background-color: #D6A201;
+    color: #0c6f58;
+    font-weight: bold;
+    border: none;
+}
+
+.btn-custom:hover {
+    background-color: #b88a00;
+    color: white;
+}
+
+.table-bordered {
+    border-color: #146a54;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border-color: #146a54;
+}
+
+
+.card {
+    background-color: #2c2c2c;
+}
+
+.nav-tabs .nav-link {
+    color: #fff;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.btn-warning {
+    color: #000;
+}

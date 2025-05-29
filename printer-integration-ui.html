@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar">
+
+<head>
+    <meta charset="UTF-8">
+    <title>اختبار الطباعة</title>
+    <style>
+        body {
+            background-color: #1F1F1F;
+            color: #f0f0f0;
+            font-family: sans-serif;
+            direction: rtl;
+            padding: 20px;
+            text-align: right;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background-color: #084d3e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        h1 {
+            color: #D6A201;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #D6A201;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            border: none;
+        }
+
+        button {
+            background-color: #D6A201;
+            color: #0c6f58;
+            font-weight: bold;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #b88a00;
+            color: white;
+        }
+
+        .result {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>اختبار أمر طباعة</h1>
+        <label for="url">رابط الصفحة المطلوب طباعتها:</label>
+        <input type="text" id="url" value="https://kareem0badawy.github.io/thermal-invoice-test/" placeholder="https://example.com/invoice.html">
+
+        <label for="token">التوكن:</label>
+        <input type="text" id="token" value="eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIzIiwianRpIjoiNGE1MzljMGY4YTAyZjEzMGE4NGJkNWZkYTU2NTA2MTNjNWE3ZjQ4ZDQwNmQ1MGFjNDY1ZWRiNjcwMDQ3NzEyOGM1NjBmN2ZlOTE0ZTIwMzYiLCJpYXQiOjE3NDc2NDI1NTEuMDc1OTk2LCJuYmYiOjE3NDc2NDI1NTEuMDc2LCJleHAiOjE3NzkxNzg1NTAuOTY3NjA4LCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.RHn9lB52g8bVTJrAaHTdvGo47EukoAAL89qvq2kPb2BYn0JQNtDVdp4ireCRm-3JQEcQGywtihU4YrCQ559MmOZrTQDY-cQWRcXI4_QsPWzCXatGLgkULosHacfNVMSsluHpYscHXJicYHbfngM2DncrhsoRabjn_IPGsuQiJS8gcG5N8ljutsq9JQmsQJeQCVSlGfZbxAY-BAKSgMbAhOvL0kwnhd1vCZs23QXDYrdoD_Lq5tZVxQaAyfW2d0Rjxhw_xBrogOK2JF2hM2LUgKwm4lLyeitv1rcDKB62Ouh7Bvj0Y_uoRIp5iyj8f_O2D-oxvdFcbYQZPNA5yoBV5ToGmktc1OWLCEybPzWIMGA5P8GWS57hQ0YNNM_QnhBz4Bo9tkU0ga8hZo9xRbBs9Z9HUn_gWvf0AOGSrYXpxSHniMd6OqsN-FPBc-7l2jqBbXIEsWXzJm__J1x68KuPGL505U7Rju58_up8Yc0aGjLxIqm7TpNPMAj9rqh4gGBISMjE93TPfANZ2MZSA1adOz3dJQixE4IYm9T0AHqalyHDiVaWfet8qKmXxc06sB7GA9IG9icy4JC0Ou-coaWgHhMODXvYbVAhLUEJv0IRG9QTtVm8T360Nuo_NJ1eO53078yqTRR55vnUA89YDgCtI5Y6UyTepgezWGhiKmlFra4" placeholder="Bearer token هنا">
+
+        <label for="printer">اختر الطابعات:</label>
+        <select id="printer" multiple></select>
+
+        <button onclick="submitPrint()">طباعة</button>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        let printers = [];
+
+        async function loadPrinters() {
+            try {
+                const res = await fetch('http://localhost:4000/printers');
+                printers = await res.json();
+                const select = document.getElementById('printer');
+                select.innerHTML = '';
+                printers.forEach(p => {
+                    const option = document.createElement('option');
+                    option.value = p.name;
+                    option.textContent = p.name;
+                    select.appendChild(option);
+                });
+            } catch (err) {
+                document.getElementById('result').textContent = 'فشل في تحميل الطابعات';
+            }
+        }
+
+        async function submitPrint() {
+            const url = document.getElementById('url').value;
+            const token = document.getElementById('token').value;
+            const select = document.getElementById('printer');
+            const printerNames = Array.from(select.selectedOptions).map(opt => opt.value);
+            const button = document.querySelector('button');
+
+            if (!url || !token || printerNames.length === 0) {
+                document.getElementById('result').textContent = 'يرجى إدخال جميع البيانات واختيار طابعة واحدة على الأقل';
+                return;
+            }
+
+            button.disabled = true;
+            button.textContent = 'جاري الإرسال...';
+
+            try {
+                const res = await fetch('http://localhost:4000/print-from-url', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url, token, printers: printerNames })
+                });
+
+                const data = await res.json();
+                if (res.ok) {
+                    document.getElementById('result').textContent = 'تم إرسال أمر الطباعة بنجاح';
+                } else {
+                    document.getElementById('result').textContent = 'فشل الطباعة: ' + data.error;
+                }
+            } catch (err) {
+                document.getElementById('result').textContent = 'حدث خطأ في الاتصال بالخادم';
+            }
+
+            button.disabled = false;
+            button.textContent = 'طباعة';
+        }
+
+        window.onload = loadPrinters;
+    </script>
+
+</body>
+
+</html>

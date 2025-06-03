@@ -1,47 +1,50 @@
 {
-    "name": "printer-agent",
-    "version": "1.1.0",
-    "main": "main.js",
-    "scripts": {
-        "start": "electron .",
-        "rebuild": "electron-rebuild",
-        "build": "electron-builder",
-        "postinstall": "electron-builder install-app-deps"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "description": "Sajlha background printing agent",
-    "dependencies": {
-        "@thiagoelg/node-printer": "^0.6.2",
-        "auto-launch": "^5.0.6",
-        "axios": "^1.9.0",
-        "body-parser": "^2.2.0",
-        "cors": "^2.8.5",
-        "express": "^5.1.0"
-    },
-    "devDependencies": {
-        "electron": "19.1.9",
-        "electron-builder": "^26.0.12",
-        "electron-rebuild": "^3.2.9"
-    },
-    "build": {
-        "appId": "com.sejelha.printer-agent",
-        "productName": "Sajlha Printer",
-        "asar": true,
-        "files": [
-            "**/*",
-            "assets/**/*",
-            "!dist/",
-            "!node_modules/**/*.{md,map}",
-            "!**/*.log"
-        ],
-        "extraResources": [
-            "ffmpeg.dll"
-        ],
-        "win": {
-            "target": "portable",
-            "icon": "icon.ico"
-        }
+  "name": "printer-agent",
+  "version": "1.1.25",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "rebuild": "electron-rebuild",
+    "clear_logs": "node -e \"require('fs').writeFileSync('print-log.txt', '')\"",
+    "sync-version": "node sync-version.js",
+    "build": "npm run sync-version && npm run clear_logs && electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Sajlha background printing agent",
+  "dependencies": {
+    "@thiagoelg/node-printer": "^0.6.2",
+    "auto-launch": "^5.0.6",
+    "axios": "^1.9.0",
+    "body-parser": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "electron": "19.1.9",
+    "electron-builder": "^26.0.12",
+    "electron-rebuild": "^3.2.9"
+  },
+  "build": {
+    "appId": "com.sejelha.printer-agent",
+    "productName": "Sajlha Printer",
+    "asar": true,
+    "files": [
+      "**/*",
+      "version.json",
+      "assets/**/*",
+      "!dist/",
+      "!node_modules/**/*.{md,map}",
+      "!**/*.log"
+    ],
+    "extraResources": [
+      "ffmpeg.dll"
+    ],
+    "win": {
+      "target": "portable",
+      "icon": "icon.ico"
     }
+  }
 }

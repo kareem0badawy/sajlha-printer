@@ -1,74 +1,92 @@
 # 🖨️ Sajlha Printer Manager
 
-A lightweight cross-platform desktop printing agent built with Electron and Node.js.  
-It allows automatic printing of web-based invoices (or documents) silently to a specified printer.
+A lightweight desktop printing assistant for **Sajlha platform**, built with Electron and Node.js.  
+It enables **silent printing** of documents directly from web-based URLs, with token-based authentication and queue management.
 
 ---
 
 ## 🚀 Features
 
-- List all available printers on the host machine.
-- Automatically open and print documents from a secure URL.
-- Inject authentication token (JWT) into `localStorage` before printing.
-- Silent printing with support for multiple printers.
-- Print job deduplication to prevent repeated prints.
-- Logging system (saved to `print-log.txt`).
-- View, refresh, clear, and download logs from the UI.
-- Auto-launch on system startup.
-- RTL UI with Arabic language support.
+- ✅ View all available printers on the system.
+- ✅ Print from a secure URL without manual download.
+- ✅ Inject JWT token into browser `localStorage` before printing.
+- ✅ Automatically waits for `window.invoiceReady === true` before printing.
+- ✅ Silent printing with multiple printer support.
+- ✅ Prevents repeated prints using job deduplication.
+- ✅ View current print queues and grouped job counts.
+- ✅ Manage jobs: **Pause, Resume, or Cancel** individual print jobs.
+- ✅ Built-in logging (`print-log.txt`) for all actions and errors.
+- ✅ Log viewer in the UI with options to refresh, clear, or download logs.
+- ✅ Auto-launch on system startup (Windows).
+- ✅ Arabic-first user interface with **Bootstrap RTL** styling.
+- ✅ Splash screen & system tray support.
+- ✅ Centralized version control via `version.json`.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Electron** – For desktop app window & tray.
-- **Express.js** – For local API server.
-- **Node.js** – Core runtime and system integrations.
-- **@thiagoelg/node-printer** – Native printer access.
-- **Bootstrap 5 RTL** – Responsive UI styling.
+- **Electron** – Desktop app shell and tray support.
+- **Express.js** – Local API server.
+- **Node.js** – Runtime environment and native integration.
+- **@thiagoelg/node-printer** – Access to system printers and jobs.
+- **Bootstrap 5 RTL** – Arabic-friendly UI.
 - **HTML/CSS/JS** – Frontend interface.
-
----
-
-## 📂 Folder Structure
-
-```
-.
-├── assets/
-│   ├── css/
-│   ├── fonts/
-│   ├── js/
-├── index.html
-├── splash.html
-├── main.js (or index.js)
-├── print-log.txt
-```
 
 ---
 
 ## 🖥️ How It Works
 
-1. The app launches a local Express server on `http://localhost:4000`.
-2. `/printers` returns available printers.
-3. `/print-from-url` accepts:
-   ```json
-   {
-     "url": "https://invoice-page.com",
-     "printers": ["HP LaserJet 1020"],
-     "token": "JWT_TOKEN"
-   }
-   ```
-4. Electron opens the URL, injects the token, waits for `window.invoiceReady === true`, and silently prints.
-5. All actions are logged to `print-log.txt`.
+1. App starts an Express server on `http://localhost:4000`.
+2. User opens the UI and manages printers, jobs, and logs.
+3. To print:
+   - POST to `/print-from-url` with:
+     ```json
+     {
+       "url": "https://some-invoice-page.com",
+       "printers": ["HP Printer 1", "HP Printer 2"],
+       "token": "your_jwt_token",
+       "copies": 2
+     }
+     ```
+   - The app:
+     - Opens a hidden browser.
+     - Injects the token into `localStorage`.
+     - Waits until `window.invoiceReady === true`.
+     - Silently prints to the selected printer(s).
+
+4. All actions are logged and visible in the UI under "السجل".
 
 ---
 
-## 🧪 Local Endpoints
+## 📂 Folder Structure
+```
+.
+├── assets/
+│ ├── css/
+│ ├── fonts/
+│ ├── js/
+├── index.html
+├── splash.html
+├── main.js
+├── version.json
+├── print-log.txt
+```
 
-| Route               | Method | Description                          |
+
+---
+
+## 🔌 Local API Endpoints
+
+| Route              | Method | Description                          |
 |--------------------|--------|--------------------------------------|
 | `/ping`            | GET    | Health check                         |
+| `/version`         | GET    | Returns app version from version.json|
 | `/printers`        | GET    | List available printers              |
+| `/queues`          | GET    | Get current print jobs               |
+| `/pause-job`       | POST   | Pause a print job                    |
+| `/resume-job`      | POST   | Resume a paused job                  |
+| `/cancel-job`      | POST   | Cancel a print job                   |
 | `/print-from-url`  | POST   | Start a print job                    |
 | `/logs`            | GET    | Get logs as JSON                     |
 | `/logs`            | DELETE | Clear log file                       |
@@ -76,57 +94,35 @@ It allows automatic printing of web-based invoices (or documents) silently to a 
 
 ---
 
-## 📋 Requirements
+## 🧾 Example Log Entry
 
-- Node.js v16+
-- Electron 25+
-- Windows/macOS/Linux with printer drivers installed
+Logs are saved in `print-log.txt` in this format:
+
 
 ---
 
-## 🧾 Installation & Run
+## 🧪 Requirements
+
+- Node.js v16 or higher
+- Compatible with **Windows, macOS, Linux**
+- Works with most modern printers (ensure drivers are installed)
+
+---
+
+## 🚀 Installation & Run
 
 ```bash
 # Install dependencies
 npm install
 
-# Run the app
+# Start the app
 npm start
-```
-
-> Note: Electron will launch the tray app and open the UI in a browser window.
 
 ---
 
-## 📝 Logging Format
-
-All logs are stored in `print-log.txt` in this format:
-
-```
-[29-05-2025 04:42] ✅ Printed successfully on HP LaserJet
-```
-
----
-
-## 📦 Packaging (Optional)
-
-To package the app as an executable:
+## 📦 Build & Package
 
 ```bash
-npm install electron-packager -g
+# Build App
+npm run build
 
-electron-packager . sajlha-printer --platform=win32 --arch=x64 --icon=assets/icon.ico
-```
-
----
-
-## 👤 Author
-
-**Sajlha Team**  
-For internal printing automation solutions.
-
----
-
-## 📃 License
-
-MIT License – Feel free to use and customize.

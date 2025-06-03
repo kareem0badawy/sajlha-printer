@@ -1,8 +1,10 @@
 
-@font-face {
+/* @font-face {
     font-family: 'Cairo';
     src: url('assets/fonts/cairo.ttf');
-}
+} */
+
+  /* font-family: 'Amiri', serif; */
 
 @media print {
   @page {
@@ -23,16 +25,20 @@
   }
 }
 
-* {
+/* @import url(https://fonts.googleapis.com/earlyaccess/amiri.css); */
+@import url('assets/fonts/cairo.css');
+
+/* * {
     font-family: 'Cairo', sans-serif !important;
-}
+} */
 
 body {
+    /* font-family:'Amiri', serif; */
     background-color: #1F1F1F;
     color: #f8f9fa;
     direction: rtl;
     padding-top: 40px;
-    /* font-family: 'Cairo', sans-serif; */
+    font-family: 'Cairo', serif;
     font-weight: 700;
 }
 
